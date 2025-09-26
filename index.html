@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineReview - Movie Review & Rating Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="loading-spinner hidden">
+    <div class="spinner"></div>
+    <p>Loading movies...</p>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-film"></i>
+          <h1>CineReview</h1>
+        </div>
+        
+        <!-- Enhanced Search Section -->
+        <div class="search-container">
+          <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Search movies, actors, genres..." autocomplete="off">
+            <button id="searchBtn" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div id="searchSuggestions" class="search-suggestions hidden"></div>
+        </div>
+
+        <!-- Enhanced Navigation -->
+        <nav class="nav-buttons">
+          <button id="homeBtn" class="nav-btn active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </button>
+         
+          <button id="favoritesBtn" class="nav-btn">
+            <i class="fas fa-heart"></i>
+            <span>Favorites</span>
+            <span id="favoriteCount" class="count-badge">0</span>
+          </button>
+          <button id="historyBtn" class="nav-btn">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Enhanced Mobile Navigation -->
+  <nav id="mobileNav" class="mobile-nav hidden">
+    <button class="nav-btn" data-section="home">
+      <i class="fas fa-home"></i> Home
+    </button>
+    
+    <button class="nav-btn" data-section="favorites">
+      <i class="fas fa-heart"></i> Favorites
+    </button>
+    <button class="nav-btn" data-section="history">
+      <i class="fas fa-history"></i> History
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="container">
+      
+      <!-- Home Section -->
+      <section id="homeSection" class="section active">
+        <!-- Hero Section -->
+        <div class="hero">
+          <h2>Discover, Review & Rate Movies</h2>
+          <p>Your ultimate destination for movie reviews and ratings</p>
+          <div class="quick-search">
+            <button class="genre-btn" data-genre="action">Action</button>
+            <button class="genre-btn" data-genre="comedy">Comedy</button>
+            <button class="genre-btn" data-genre="drama">Drama</button>
+            <button class="genre-btn" data-genre="horror">Horror</button>
+            <button class="genre-btn" data-genre="sci-fi">Sci-Fi</button>
+          </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResultsContainer">
+          <div class="section-header">
+            <h3 id="resultsTitle">Popular Movies</h3>
+            <div class="filter-controls">
+              <select id="sortFilter">
+                <option value="popularity">Sort by Popularity</option>
+                <option value="rating">Sort by Rating</option>
+                <option value="year">Sort by Year</option>
+                <option value="title">Sort by Title</option>
+              </select>
+            </div>
+          </div>
+          <div id="searchResults" class="movies-grid"></div>
+          <div id="loadMoreContainer" class="load-more-container hidden">
+            <button id="loadMoreBtn" class="load-more-btn">Load More Movies</button>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="no-results hidden">
+          <i class="fas fa-search"></i>
+          <h3>No movies found</h3>
+          <p>Try searching with different keywords</p>
+        </div>
+      </section>
+
+      
+
+      <!-- Favorites Section -->
+      <section id="favoritesSection" class="section hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-heart"></i> My Favorites</h2>
+          <div class="favorites-stats">
+            <span id="favoritesCount">0 movies</span>
+          </div>
+        </div>
+        <div id="favoritesGrid" class="movies-grid"></div>
+        <div id="noFavorites" class="no-content hidden">
+          <i class="fas fa-heart-broken"></i>
+          <h3>No favorites yet</h3>
+          <p>Add some movies to your favorites to see them here</p>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section id="historySection" class="section hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-history"></i> Review History</h2>
+          <div class="history-actions">
+            <span id="historyCount">0 reviews</span>
+            <button id="clearHistoryBtn" class="clear-btn">Clear History</button>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+        <div id="noHistory" class="no-content hidden">
+          <i class="fas fa-clock"></i>
+          <h3>No reviews yet</h3>
+          <p>Start reviewing movies to build your history</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Enhanced Movie Details Modal -->
+  <div id="movieModal" class="modal hidden">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="closeModal" class="close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="movie-info">
+          <div class="movie-poster">
+            <img id="moviePoster" alt="Movie Poster" loading="lazy">
+            <button id="favoriteBtn" class="favorite-btn">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+          
+          <div class="movie-details">
+            <h2 id="movieTitle"></h2>
+            <div class="movie-meta">
+              <span id="movieYear" class="meta-item">
+                <i class="fas fa-calendar"></i>
+                <span class="meta-value"></span>
+              </span>
+              <span id="movieRating" class="meta-item rating">
+                <i class="fas fa-star"></i>
+                <span class="meta-value"></span>
+              </span>
+              <span id="movieRuntime" class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span class="meta-value"></span>
+              </span>
+              <span id="movieGenre" class="meta-item">
+                <i class="fas fa-tags"></i>
+                <span class="meta-value"></span>
+              </span>
+            </div>
+            
+            <div class="movie-overview">
+              <h3><i class="fas fa-info-circle"></i> Overview</h3>
+              <p id="movieOverview"></p>
+            </div>
+            
+            <div class="movie-cast">
+              <h3><i class="fas fa-users"></i> Cast</h3>
+              <p id="movieCast"></p>
+            </div>
+            
+            <div class="movie-director">
+              <h3><i class="fas fa-user-tie"></i> Director</h3>
+              <p id="movieDirector"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Rating Section -->
+        <div class="user-interaction">
+          <div class="rating-section">
+            <h3><i class="fas fa-star"></i> Rate This Movie</h3>
+            <div class="star-rating">
+              <span class="star" data-rating="1">⭐</span>
+              <span class="star" data-rating="2">⭐</span>
+              <span class="star" data-rating="3">⭐</span>
+              <span class="star" data-rating="4">⭐</span>
+              <span class="star" data-rating="5">⭐</span>
+            </div>
+            <p id="ratingDisplay" class="rating-display">Click to rate</p>
+          </div>
+
+          <!-- Review Section -->
+          <div class="review-section">
+            <h3><i class="fas fa-edit"></i> Write a Review</h3>
+            <textarea id="reviewText" placeholder="Share your thoughts about this movie..." maxlength="500"></textarea>
+            <div class="review-actions">
+              <span id="charCount" class="char-count">0/500</span>
+              <button id="submitReview" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                Submit Review
+              </button>
+            </div>
+          </div>
+
+          <!-- Existing Reviews -->
+          <div id="reviewsSection" class="reviews-list">
+            <h3><i class="fas fa-comments"></i> Your Reviews</h3>
+            <div id="userReviews"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Enhanced Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <p>&copy; 2025 CineReview - Your Ultimate Movie Companion</p>
+          <p>Powered by TMDB API</p>
+        </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">About</a>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Contact</a>
+          <a href="#" class="footer-link">API</a>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
